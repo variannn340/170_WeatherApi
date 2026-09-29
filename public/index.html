@@ -1,49 +1,350 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geolocation</title>
+    <title>Cuaca Kota</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #eef4f8;
+            color: #263445;
+        }
+
+        header {
+            background: #176b87;
+            color: white;
+            text-align: center;
+            padding: 25px 15px;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            color: #176b87;
+            margin-top: 0;
+        }
+
+        .search {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccd9e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            background: #176b87;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 18px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #10546b;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .city {
+            font-size: 25px;
+            font-weight: bold;
+            margin: 10px 0 20px;
+        }
+
+        .info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .item {
+            background: #f2f8fb;
+            padding: 14px;
+            border-radius: 8px;
+            overflow-wrap: anywhere;
+        }
+
+        .item span {
+            display: block;
+            color: #637789;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .item strong {
+            font-size: 16px;
+        }
+
+        .weather {
+            text-align: center;
+        }
+
+        .weather-icon {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+        }
+
+        .temperature {
+            font-size: 44px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .condition {
+            color: #637789;
+            font-size: 18px;
+            margin-bottom: 22px;
+        }
+
+        .status {
+            color: #637789;
+            font-size: 14px;
+            margin-top: 16px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            color: #637789;
+            font-size: 13px;
+        }
+
+        @media (max-width: 450px) {
+            .search {
+                flex-direction: column;
+            }
+
+            .info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-    <h3>Nama : Varian Muhammad </h3>
-    <h3>NIM : 20230140170 </h3>
-    
-    <p>
-         Kota :
-        <span id="lokasi"></span>
-    </p>
+    <header>
+        <h1>Informasi Cuaca Kota</h1>
+        <p>Cari lokasi dan lihat kondisi cuaca terkini</p>
+    </header>
 
-    <hr>
+    <main class="container">
 
-    <p>
-        Koordinat:
-        <span id="negara"></span>
-    </p>
+        <section class="card">
+            <h2>Cari Kota</h2>
+
+            <form id="form-cari">
+                <div class="search">
+                    <input
+                        type="text"
+                        id="input-kota"
+                        placeholder="Contoh: Bandung, Tokyo, London"
+                        required
+                    >
+                    <button type="submit" id="tombol-cari">
+                        Cari
+                    </button>
+                </div>
+            </form>
+
+            <p class="status" id="status">
+                Masukkan nama kota untuk mencari cuaca.
+            </p>
+        </section>
+
+        <section class="card">
+            <h2>Informasi Lokasi</h2>
+
+            <div class="city" id="lokasi">-</div>
+
+            <div class="info">
+                <div class="item">
+                    <span>Negara</span>
+                    <strong id="negara">-</strong>
+                </div>
+
+                <div class="item">
+                    <span>Longitude</span>
+                    <strong id="longitude">-</strong>
+                </div>
+
+                <div class="item">
+                    <span>Latitude</span>
+                    <strong id="latitude">-</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="card weather">
+            <h2>Kondisi Cuaca Terkini</h2>
+
+            <img
+                id="ikon-cuaca"
+                class="weather-icon"
+                alt="Ikon cuaca"
+                hidden
+            >
+
+            <div class="temperature" id="suhu">--°C</div>
+
+            <p class="condition" id="kondisi-cuaca">
+                Belum ada data cuaca
+            </p>
+
+            <div class="info">
+                <div class="item">
+                    <span>Terasa Seperti</span>
+                    <strong id="terasa">--°C</strong>
+                </div>
+
+                <div class="item">
+                    <span>Kelembapan</span>
+                    <strong id="kelembapan">--%</strong>
+                </div>
+
+                <div class="item">
+                    <span>Kecepatan Angin</span>
+                    <strong id="angin">-- km/jam</strong>
+                </div>
+
+                <div class="item">
+                    <span>Indeks UV</span>
+                    <strong id="uv">--</strong>
+                </div>
+            </div>
+
+            <p class="status" id="waktu-cuaca"></p>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>Data lokasi dari MapTiler dan cuaca dari WeatherAPI</p>
+    </footer>
 
     <script>
+        const form = document.getElementById("form-cari");
+        const inputKota = document.getElementById("input-kota");
+        const tombolCari = document.getElementById("tombol-cari");
 
-        fetch("/api/lokasi")
-            .then(response => response.json())
-            .then(data => {
-                
-                console.log(data);
+        form.addEventListener("submit", async function(event) {
+            event.preventDefault();
 
-                document.getElementById("lokasi").innerHTML = data.kota;
+            const kota = inputKota.value.trim();
 
-                document.getElementById("negaea").innerHTML =
-                    data.koordinat;
+            if (!kota) return;
 
-            })
-            .catch(errpr => {
+            tombolCari.disabled = true;
+            tombolCari.textContent = "Mencari...";
+            document.getElementById("status").textContent =
+                "Sedang mencari lokasi dan cuaca...";
 
+            try {
+                const response = await fetch(
+                    `/api/lokasi?kota=${encodeURIComponent(kota)}`
+                );
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || "Data tidak ditemukan");
+                }
+
+                // Informasi lokasi
+                document.getElementById("lokasi").textContent = data.kota;
+                document.getElementById("negara").textContent = data.negara;
+                document.getElementById("longitude").textContent =
+                    data.koordinat[0];
+                document.getElementById("latitude").textContent =
+                    data.koordinat[1];
+
+                // Informasi cuaca
+                const cuaca = data.cuaca;
+
+                document.getElementById("suhu").textContent =
+                    cuaca.suhu + "°C";
+
+                document.getElementById("kondisi-cuaca").textContent =
+                    cuaca.kondisi;
+
+                document.getElementById("terasa").textContent =
+                    cuaca.terasa + "°C";
+
+                document.getElementById("kelembapan").textContent =
+                    cuaca.kelembapan + "%";
+
+                document.getElementById("angin").textContent =
+                    cuaca.angin + " km/jam";
+
+                document.getElementById("uv").textContent = cuaca.uv;
+
+                const ikon = document.getElementById("ikon-cuaca");
+                ikon.src = "https:" + cuaca.ikon;
+                ikon.hidden = false;
+
+                document.getElementById("waktu-cuaca").textContent =
+                    "Waktu lokal: " + data.waktu;
+
+                document.getElementById("status").textContent =
+                    "Data berhasil ditemukan.";
+
+            } catch (error) {
                 console.error(error);
-            });
 
+                document.getElementById("status").textContent =
+                    error.message;
 
+                document.getElementById("lokasi").textContent = "-";
+                document.getElementById("negara").textContent = "-";
+                document.getElementById("longitude").textContent = "-";
+                document.getElementById("latitude").textContent = "-";
+                document.getElementById("suhu").textContent = "--°C";
+                document.getElementById("kondisi-cuaca").textContent =
+                    "Data cuaca tidak tersedia";
+                document.getElementById("terasa").textContent = "--°C";
+                document.getElementById("kelembapan").textContent = "--%";
+                document.getElementById("angin").textContent = "-- km/jam";
+                document.getElementById("uv").textContent = "--";
+                document.getElementById("ikon-cuaca").hidden = true;
+                document.getElementById("waktu-cuaca").textContent = "";
+            } finally {
+                tombolCari.disabled = false;
+                tombolCari.textContent = "Cari";
+            }
+        });
     </script>
-
 
 </body>
 </html>
