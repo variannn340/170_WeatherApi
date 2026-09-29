@@ -3,9 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Geolocation</title>
 </head>
 <body>
+
+    <h3>Nama : Varian Muhammad </h3>
+    <h3>NIM : 20230140170 </h3>
     
+    <p>
+         Kota :
+        <span id="lokasi"></span>
+    </p>
+
+    <hr>
+
+    <p>
+        Koordinat:
+        <span id="negara"></span>
+    </p>
+
+    <script>
+
+        fetch("/api/lokasi")
+            .then(response => response.json())
+            .then(data => {
+                
+                console.log(data);
+
+                document.getElementById("lokasi").innerHTML = data.kota;
+
+                document.getElementById("negaea").innerHTML =
+                    data.koordinat;
+
+            })
+            .catch(errpr => {
+
+                console.error(error);
+            });
+
+
+    </script>
+
+
 </body>
 </html>
